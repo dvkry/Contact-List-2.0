@@ -47,7 +47,6 @@ class Application
     firstname = STDIN.gets.chomp
     print "Last name: "
     lastname = STDIN.gets.chomp
-
     contact = Contact.new(firstname, lastname, email)
     contact.save
   end

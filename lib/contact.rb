@@ -13,11 +13,9 @@ class Contact
 
   def save
     if @id #if it has an id, it's an update, else it's a create
-      #update
       self.class.connection.exec_params("UPDATE contacts SET firstname = $1, lastname = $2, email = $3 WHERE id = $4;", [@firstname, @lastname, @email, @id])
     else
       self.class.connection.exec_params("INSERT INTO contacts ( firstname, lastname, email ) VALUES ( $1, $2, $3 );", [@firstname, @lastname, @email])
-      #create
     end
   end
 
