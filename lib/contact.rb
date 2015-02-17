@@ -47,12 +47,32 @@ class Contact
       end
     end
   end
+
+  def self.find_by_email(email)
+    connection.exec_params( "SELECT * FROM contacts WHERE \"email\" = $1", [email]) do |records|
+      records.each do |record|
+        return Contact.new(record['firstname'], record['lastname'], record['email'], record['id'])
+      end
+    end
+  end
+
+  def self.find_all_by_lastname(name)
+    return_records = []
+    connection.exec_params( "SELECT * FROM contacts WHERE \"lastname\" = $1", [name]) do |records|
+      records.each do |record|
+        return_records << Contact.new(record['firstname'], record['lastname'], record['email'], record['id'])
+      end
+    end
+    return_records
+  end
+
+  def self.find_all_by_firstname(name)
+    return_records = []
+    connection.exec_params( "SELECT * FROM contacts WHERE \"firstname\" = $1", [name]) do |records|
+      records.each do |record|
+        return_records << Contact.new(record['firstname'], record['lastname'], record['email'], record['id'])
+      end
+    end
+    return_records
+  end
 end
-
-
-
-# contact = Contact.new("jim", "schmit", "Jimmy@potatoe.com")
-# p contact.firstname
-# #contact.save
-# all = Contact.all
-# puts all.inspect
