@@ -1,6 +1,7 @@
 require_relative 'contact'
-require 'pg'
+
 require 'colorize'
+require 'active_record'
 
 class Application
 
@@ -24,10 +25,11 @@ class Application
   end
 
   def display(contact)
-      puts 'Contact id: ' + contact.id.blue
-      puts '  Name    : ' + contact.firstname.red + ' ' + contact.lastname.red
-      puts '  Email   : ' + contact.email.green
-      puts ''
+    return if contact == nil
+    puts 'Contact id: ' + contact.id.to_s.blue
+    puts '  Name    : ' + contact.firstname.red + ' ' + contact.lastname.red
+    puts '  Email   : ' + contact.email.green
+    puts ''
   end
 
   def list
@@ -47,8 +49,7 @@ class Application
     firstname = STDIN.gets.chomp
     print "Last name: "
     lastname = STDIN.gets.chomp
-    contact = Contact.new(firstname, lastname, email)
-    contact.save
+    contact = Contact.create({:firstname => firstname, :lastname => lastname, :email => email})
   end
 
   def find(id)
@@ -56,13 +57,13 @@ class Application
   end
 
   def find_email(email)
-    contact = Contact.find_by_email(email)
+    contact = Contact.find_by(:email => email)
     puts "Not Found!".red if contact == nil
     display(contact)
   end
 
   def find_lastnames(name)
-    contacts = Contact.find_all_by_lastname(name)
+    contacts = Contact.where(:lastname => name)
     puts "Not Found!".red if contacts.length == 0
     contacts.each do |contact|
       display(contact)
@@ -70,7 +71,7 @@ class Application
   end
 
   def find_firstname(name)
-    contacts = Contact.find_all_by_firstname(name)
+    contacts = Contact.where(:firstname => name)
     puts "Not Found!".red if contacts.length == 0
     contacts.each do |contact|
       display(contact)
@@ -117,5 +118,21 @@ class Application
   end
 end
 
+# ActiveRecord::Base.logger = Logger.new(STDOUT)
+ 
+puts "Establishing connection to database ..."
+ActiveRecord::Base.establish_connection(
+  adapter: 'postgresql',
+  encoding: 'unicode',
+  pool: 5,
+  database: 'dabjdlvk42cjca',
+  username: 'ggksuwkfoftnwz',
+  password: 'aiSGpIxYTNqZJ-wPf4J-CStVqa',
+  host: 'ec2-107-21-93-97.compute-1.amazonaws.com',
+  port: 5432,
+  min_messages: 'error'
+)
+puts "CONNECTED"
+
 app = Application.new
-app.command(ARGV.first.downcase)
+app.command(ARGV.first)
