@@ -1,0 +1,1 @@
+Database credentials must be configured in setup.rb in order for this code to run.

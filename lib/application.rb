@@ -1,9 +1,36 @@
 require_relative 'contact'
+require_relative 'setup'
 
 require 'colorize'
-require 'active_record'
 
 class Application
+
+  def initialize
+    command(ARGV.first)
+  end
+
+  def command(arg)
+    case arg
+    when 'help'
+      help
+    when 'new'
+      create_new
+    when 'list'
+      list
+    when 'find'
+      find(ARGV[1].to_i)
+    when 'destroy'
+      destroy(ARGV[1].to_i)
+    when 'lastname'
+      find_lastnames(ARGV[1])
+    when 'firstname'
+      find_firstname(ARGV[1])
+    when 'email'
+      find_email(ARGV[1])
+    else
+      help
+    end
+  end
 
   def help
     puts "Here is a list of available commands:".green
@@ -78,7 +105,7 @@ class Application
     end
   end
   
-  def are_you_sure?
+  def user_is_sure?
     print "Are you sure? (type 'yes') ".red
     STDIN.gets.chomp.downcase == 'yes' # true if user types yes, false otherwise
   end
@@ -86,7 +113,7 @@ class Application
   def destroy(id)
     contact = Contact.find(id)
     display(contact)
-    if are_you_sure?
+    if user_is_sure?
       contact.destroy
       puts '...Destroyed'
     else
@@ -94,45 +121,7 @@ class Application
     end
   end
 
-  def command(arg)
-    case arg
-    when 'help'
-      help
-    when 'new'
-      create_new
-    when 'list'
-      list
-    when 'find'
-      find(ARGV[1].to_i)
-    when 'destroy'
-      destroy(ARGV[1].to_i)
-    when 'lastname'
-      find_lastnames(ARGV[1])
-    when 'firstname'
-      find_firstname(ARGV[1])
-    when 'email'
-      find_email(ARGV[1])
-    else
-      help
-    end
-  end
 end
 
-# ActiveRecord::Base.logger = Logger.new(STDOUT)
- 
-puts "Establishing connection to database ..."
-ActiveRecord::Base.establish_connection(
-  adapter: 'postgresql',
-  encoding: 'unicode',
-  pool: 5,
-  database: 'dabjdlvk42cjca',
-  username: 'ggksuwkfoftnwz',
-  password: 'aiSGpIxYTNqZJ-wPf4J-CStVqa',
-  host: 'ec2-107-21-93-97.compute-1.amazonaws.com',
-  port: 5432,
-  min_messages: 'error'
-)
-puts "CONNECTED"
+Application.new
 
-app = Application.new
-app.command(ARGV.first)
