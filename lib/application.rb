@@ -63,7 +63,7 @@ class Application
 
   def find_lastnames(name)
     contacts = Contact.find_all_by_lastname(name)
-    puts "Not Fount!".red if contacts.length == 0
+    puts "Not Found!".red if contacts.length == 0
     contacts.each do |contact|
       display(contact)
     end
@@ -71,7 +71,7 @@ class Application
 
   def find_firstname(name)
     contacts = Contact.find_all_by_firstname(name)
-    puts "Not Fount!".red if contacts.length == 0
+    puts "Not Found!".red if contacts.length == 0
     contacts.each do |contact|
       display(contact)
     end
